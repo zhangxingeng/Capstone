@@ -15,7 +15,7 @@ Example (google drive file structure):
     - cleaned_data/
     - univariate_analysis/
     - etc...
-4. Here is the link to root folder of [all_data](https://www.google.com)
+4. Here is the link to root folder of [all_data](https://drive.google.com/drive/folders/184tVjsIO-GAjbkSakwDbEZ40M5mPpgu4?usp=sharing)
 
 ## Code Upload
 1. Same as Data, we need to share code written for whole team to see
