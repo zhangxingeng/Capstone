@@ -11,6 +11,7 @@
 
 |Cat1|Cat2|
 |---|---|
+|index_code|index_group_name|
 |club_member_status|fashion_news_frequency|
   - Method: Chi-Squared 
 3. Cat to Num
