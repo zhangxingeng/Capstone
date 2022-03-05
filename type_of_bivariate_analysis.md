@@ -7,3 +7,6 @@
 3. Cat to Num
   - DataTuple: (date, price), (sales_id, price), (<article related>, price), (club_mem_status, fashion_new_freq)
   - Method: z-test, t-test, f-test, ANOVA 
+
+  Jobs:
+  T-test, etc, ANOVA
