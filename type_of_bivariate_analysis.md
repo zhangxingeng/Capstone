@@ -9,4 +9,6 @@
   - Method: z-test, t-test, f-test, ANOVA 
 
   Jobs:
-  T-test, etc, ANOVA
+  - Xingeng: T-test, etc, ANOVA
+  - 
+  - 
