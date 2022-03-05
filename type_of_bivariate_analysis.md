@@ -1,3 +1,3 @@
-Num to Num
-Cat to Cat
-Cat to Num
+- Num to Num
+- Cat to Cat
+- Cat to Num
