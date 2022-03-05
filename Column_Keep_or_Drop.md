@@ -1,5 +1,5 @@
 John:
-Keep column
-Drop Column
-Not Sure
+- Keep column
+- Drop Column
+- Not Sure
 
