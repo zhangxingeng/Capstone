@@ -22,8 +22,8 @@
 |sales_channel_id|price|
 |club_member_status|price|
 |fashion_news_frequency|price|
-|<article category>|price|
-|<article color>|price|
+|some article category|price|
+|some article color|price|
 |all the above|age|
 
   
