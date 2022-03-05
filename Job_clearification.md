@@ -1,5 +1,6 @@
 1. Num to Num 
   - DataTuple:
+
 |Num1|Num2|
 |---|---|
   |age|price|
@@ -7,12 +8,14 @@
   - Method: Covariance, scatter plot
 2. Cat to Cat
   - DataTyple: 
+
 |Cat1|Cat2|
 |---|---|
 |club_member_status|fashion_news_frequency|
   - Method: Chi-Squared 
 3. Cat to Num
   - DataTuple: 
+
 |Cat|Num|
 |---|---|
 |date|price|
