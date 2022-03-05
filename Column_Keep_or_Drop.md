@@ -5,8 +5,8 @@ John:
     3.product_group_name  
     4.colour_group_name  
     5.department_name  
-    6.index_name    	
-    7.index_group_name  
+    6.index_name      	
+    7.index_group_name   
     8.section_name    
     9.garment_group_name    
 
