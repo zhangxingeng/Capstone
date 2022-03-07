@@ -23,7 +23,7 @@
 |sales_channel_id|price|
 |club_member_status|price|
 |fashion_news_frequency|price|
-|some article category|price|
+|index_group_name|price|
 |colour_group_name|price|
 |all the above|age|
 
