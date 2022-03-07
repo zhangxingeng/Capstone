@@ -33,7 +33,7 @@
   Jobs:
   - Xingeng: 
     - [x] T-test, etc, ANOVA
-    - [ ] run tests on num to cat
+    - [ ] run tests on num to cat, draw graph on 2-cat-graphs
   - Yibo: 
     - [x] Num to Num all and cat to num plotting
     - [ ] make distribution graphs for all cat to num, post best looking ones
