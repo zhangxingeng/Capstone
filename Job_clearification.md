@@ -24,7 +24,7 @@
 |club_member_status|price|
 |fashion_news_frequency|price|
 |some article category|price|
-|some article color|price|
+|colour_group_name|price|
 |all the above|age|
 
   
