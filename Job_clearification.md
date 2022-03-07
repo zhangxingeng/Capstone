@@ -31,8 +31,14 @@
   - Method: z-test, t-test, f-test, ANOVA 
 
   Jobs:
-  - Xingeng: T-test, etc, ANOVA
-  - Yibo: Num to Num all and cat to num plotting
-  - John: Cat to Cat all
+  - Xingeng: 
+    - [x] T-test, etc, ANOVA
+    - [ ] run tests on num to cat
+  - Yibo: 
+    - [x] Num to Num all and cat to num plotting
+    - [] make distribution graphs for all cat to num, post best looking ones
+  - John: 
+    - [x] Cat to Cat all
+    - [] run chi-squared on cat to cat
 
 
