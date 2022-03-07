@@ -19,7 +19,7 @@
 
 |Cat|Num|
 |---|---|
-|date|price|
+|t_dat|price|
 |sales_channel_id|price|
 |club_member_status|price|
 |fashion_news_frequency|price|
