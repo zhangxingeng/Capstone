@@ -6,8 +6,8 @@ John:
     product_group_name  
     colour_group_name  
     department_name  
-    index_name  	
-    index_group_name  
+    index_name
+    index_group_name 
     section_name  
     garment_group_name  
 
