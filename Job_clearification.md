@@ -36,9 +36,9 @@
     - [ ] run tests on num to cat
   - Yibo: 
     - [x] Num to Num all and cat to num plotting
-    - [] make distribution graphs for all cat to num, post best looking ones
+    - [ ] make distribution graphs for all cat to num, post best looking ones
   - John: 
     - [x] Cat to Cat all
-    - [] run chi-squared on cat to cat
+    - [ ] run chi-squared on cat to cat
 
 
