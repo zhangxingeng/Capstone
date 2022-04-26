@@ -61,7 +61,7 @@ def mapData(reducedDataPath, mappedDataPath, customerDecPath, articleDecPath):
 def sparkInit():
     print("|-- Initialize Spark...")
     conf = SparkConf()
-    conf.setAll([('spark.app.name', 'Capstone Project'), ("spark.ui.port", "4621"),
+    conf.setAll([('spark.app.name', 'Capstone Project'), 
                  ('spark.executor.memory', '16g'), ('spark.driver.memory','16g'), 
                  ('spark.executor.cores', '4'), ('spark.cores.max', '8')])
     
