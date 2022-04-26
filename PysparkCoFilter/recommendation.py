@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+import numpy as np
 import pickle
 from operator import itemgetter
 
@@ -42,7 +43,7 @@ def cleanData(rawDataPath, reducedDataPath):
     print("|-- Start Clean Data...")
     trans = pd.read_csv(rawDataPath)
     # trans.rename({"rating": "count"}, axis="column", inplace=True)
-    customArticlePair = trans[["customer_id", "article_id"]] # .head(100000)
+    customArticlePair = trans[["customer_id", "article_id"]]
     countPlaceholder = pd.Series([1 for x in range(len(customArticlePair))])
     customArticlePair.loc[:, "count"] = countPlaceholder # Add a column of purchase count
     countGroup = customArticlePair.groupby(["customer_id", "article_id"]).count() # count purchase numbers
@@ -58,11 +59,14 @@ def mapData(reducedDataPath, mappedDataPath, customerDecPath, articleDecPath):
     countDf.to_csv(mappedDataPath, header=header, index=False) # Save Counts to csv file
 
 def sparkInit():
+    print("|-- Initialize Spark...")
     conf = SparkConf()
     conf.setAll([('spark.app.name', 'Capstone Project'), ("spark.ui.port", "4621"),
-                 ('spark.executor.memory', '128g'), ('spark.driver.memory','128g'), 
+                 ('spark.executor.memory', '16g'), ('spark.driver.memory','16g'), 
                  ('spark.executor.cores', '4'), ('spark.cores.max', '8')])
+    
     ss = SparkSession.builder.config(conf=conf).getOrCreate()
+    ss.sparkContext.setLogLevel("ERROR")
     return ss
     
     
@@ -120,14 +124,15 @@ def recommend(modelPath, recRawPath):
     rec_list = rec_ranked.groupBy("customer_id") .agg(collect_list("article_id").alias("articleList"))
     rec_dict = rec_list.toPandas()
     pickle_dump(recRawPath, rec_dict)
-
+    
 """
 Clean up results for submission
 """
-def _write_formatted(df, fp):
+def _write_formatted(df, fp, header, mode="w+"):
     df["stringTemp"] = df["articleList"].apply(lambda x: str(x)[1:-1].replace(',', ""))
-    df[["customer_id", "stringTemp"]].to_csv(fp, header=["customer_id","prediction"], index=None, sep=',', mode='w+')
-    
+    df[["customer_id", "stringTemp"]].to_csv(fp, header=header, index=None, sep=',', mode=f'{mode}')
+
+
 def finalCleanup(recRawPath, customerDecPath, articleDecPath, recFinalPath):
     print("|-- Start Final Cleanup...")
     rec_dict = pickle_load(recRawPath)
@@ -136,13 +141,29 @@ def finalCleanup(recRawPath, customerDecPath, articleDecPath, recFinalPath):
 
     rec_dict["customer_id"] = rec_dict["customer_id"].map(customerDec)
     rec_dict["articleList"] = rec_dict["articleList"].apply(lambda x: list(itemgetter(*x)(articleDec)))
-    _write_formatted(rec_dict, recFinalPath)
-    print("|-- Recommendation Generated!")
+    _write_formatted(rec_dict, recFinalPath, header=["customer_id","prediction"])
 
-
+"""
+Generate Rec for missing users
+"""
+def fillEmpty(customerPath, rawDataPath, recFinalPath):
+    print("|-- Filling Missing Users...")
+    allCustomer = pd.read_csv(customerPath)["customer_id"]
+    recCustomer = pd.read_csv(recFinalPath)["customer_id"]
+    missing = list(set(allCustomer.unique()) ^ set(recCustomer.unique()))
+    missingCustomerDf = pd.DataFrame (missing, columns = ['customer_id'])
+    # Get Hottest Items
+    transactions_train = pd.read_csv(rawDataPath, dtype={'customer_id': np.str})
+    valueCnt = transactions_train['article_id'].value_counts().to_frame('count')
+    top12Item = list(valueCnt.nlargest(12, "count").index)
+    # Assign hottest item to missing user
+    missingCustomerDf["articleList"] = np.repeat([top12Item], missingCustomerDf.shape[0], axis=0).tolist()
+    _write_formatted(missingCustomerDf, recFinalPath, header=False, mode="a")
+    
 if __name__=="__main__":
     dataPath = "./co_filter"
-    rawDataPath = f"{dataPath}/transactions_train.csv"
+    rawDataPath = f"{dataPath}/transactions_selected.csv"
+    customerPath = f"{dataPath}/customers_clean.csv"
     reducedDataPath = f"{dataPath}/reducedData.csv"
     mappedDataPath = f"{dataPath}/mappedData.csv"
     customerDecPath = f"{dataPath}/customerDec.pkl"
@@ -150,7 +171,9 @@ if __name__=="__main__":
     normDataPath = f"{dataPath}/normData.pkl"
     modelPath = f"{dataPath}/savedModel/"
     recRawPath = f"{dataPath}/recRawData.pkl"
+    fullRecPath = f"{dataPath}/fullRecData.csv"
     recFinalPath= f"{dataPath}/recommend12.csv"
+    
     if not os.path.exists(reducedDataPath):
         cleanData(rawDataPath, reducedDataPath)
     if not os.path.exists(mappedDataPath):
@@ -162,5 +185,9 @@ if __name__=="__main__":
         findBestModel(ss, normDataPath, modelPath)
     if not os.path.exists(recRawPath):
         recommend(modelPath, recRawPath)
+#     if not os.path.exists(fullRecPath):
+#         fillEmpty(customerPath, rawDataPath, recRawPath, fullRecPath)
     if not os.path.exists(recFinalPath):
         finalCleanup(recRawPath, customerDecPath, articleDecPath, recFinalPath)
+        fillEmpty(customerPath, rawDataPath, recFinalPath)
+        print(f"|-- Recommendation Generated for {pd.read_csv(recFinalPath).shape[0]} Users!")
