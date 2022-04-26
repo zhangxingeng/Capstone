@@ -1,7 +1,21 @@
 To run this code, simply: 
-1. download all files and folders in this direcotry (`./`) to ilab jupyter hub
-2. download `transactions_train.csv` from google drive and save to `./co_filter` folder
-3. If you want to do a test run, simply open `recommendations.py`, go to line `45` or line `4` of function `cleanData()`, uncomment the `.head(1000)`
-4. You can change `1000` to any amount of row you want to use as testing
-5. open a terminal at current directory `./`, and run `python recommendations.py`
-6. If error caused by memory overflow, simply rerun the code, it will continue where it left off
+1. Save `recommendation.py` to a project direcotry (`./`) 
+2. Create a foler in `./` called `co_filter` and `cd` into it
+3. download all three files to ./co_filter by copy and paste these three commands:
+  1. `$ gdown --fuzzy https://drive.google.com/file/d/1ibWX5ljvfVrs18LWS3O67aXxTdT_4r53/view?usp=sharing`
+  2. `$ gdown --fuzzy https://drive.google.com/file/d/1uiIg9fqSdrfJB-WuP7eQVyobc6Za21Vi/view?usp=sharing`
+  3. `$ gdown --fuzzy https://drive.google.com/file/d/1tPEqbaQZ29W8NlL2vFKTZB7G5dEpwr3p/view?usp=sharing`
+4. Now you should have a folder structure like this:
+    ```bash
+    ProjectRoot
+    ├── co_filter
+    │   ├── articles_clean.csv
+    │   ├── customers_clean.csv
+    │   └── transactions_selected.csv
+    └── recommendation.py
+    ```
+7. If you want to do a test run, simply open `recommendations.py`, go to line `45` or line `4` of function `cleanData()`, add `.head(1000)` to the end of line
+8. You can change `1000` to any amount of row you want to use as testing
+9. open a terminal at current directory `./`, and run `python recommendations.py`
+10. If error caused by memory overflow, simply rerun the code, it will continue where it left off
+11. If you got disk quota error, let me know
