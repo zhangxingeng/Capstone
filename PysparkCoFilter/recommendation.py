@@ -1,4 +1,4 @@
-import os
+import os, sys
 import pandas as pd
 import numpy as np
 import pickle
@@ -10,7 +10,7 @@ from pyspark.sql.types import StructType,StructField, IntegerType,FloatType
 
 # from pyspark.context import SparkContext
 from pyspark.conf import SparkConf
-from pyspark.sql.functions import col, explode, collect_list, rank
+from pyspark.sql.functions import col, explode, collect_list, asc, desc
 from pyspark.ml.recommendation import ALS, ALSModel
 from pyspark.sql.window import Window
 
@@ -56,10 +56,11 @@ def mapIndex(df):
 def sparkInit():
     print("|-- Initialize Spark...")
     conf = SparkConf()
-    conf.setAll([('spark.app.name', 'Capstone Project'), ( "spark.sql.shuffle.partitions", 16),
-                 ('spark.executor.memory', '16g'), ('spark.driver.memory','16g'), 
-                 ('spark.executor.cores', '4'), ('spark.cores.max', '8')])
-    
+    conf.setAll([('spark.app.name', 'Capstone Project'), ( "spark.sql.shuffle.partitions", 8),
+                 ('spark.executor.memory', '128g'), ('spark.driver.memory','128g'), 
+                 ('spark.executor.cores', '4'), ('spark.cores.max', '4'),
+                 ("spark.sql.execution.arrow.pyspark.enabled", "true"),
+                 ("spark.sql.execution.arrow.enabled", "true")])
     ss = SparkSession.builder.config(conf=conf).getOrCreate()
     ss.sparkContext.setLogLevel("ERROR")
     return ss
@@ -91,12 +92,13 @@ def findBestModel(normDf):
 
 def recommend(model):
     rec12Raw = model.recommendForAllUsers(12)
-    rec12Pd = rec12Raw.toPandas()
-    sorter = lambda x: sorted(x, key = lambda t: t[1], reverse=True)
-    spliter = lambda x: list(zip(*x))[0]
-    rec12Pd["sorted"] = rec12Pd["recommendations"].apply(sorter)
-    rec12Pd["recList"] = rec12Pd["sorted"].apply(spliter)
-    return rec12Pd[["customer_id", "recList"]]
+    rec12Lean = rec12Raw.select("customer_id","recommendations")
+    rec12Exp = rec12Lean.withColumn("rec_exp", explode("recommendations"))
+    rec12Cleaned = rec12Exp.select('customer_id', col("rec_exp.article_id"), col("rec_exp.rating"))
+    rec12Sorted = rec12Cleaned.sort(asc("customer_id"), desc("rating"))
+    rec12Ranked = rec12Sorted.groupBy("customer_id") .agg(collect_list("article_id").alias("recList"))
+    rec12Pd = rec12Ranked.select("customer_id","recList").toPandas()
+    return rec12Pd
 
 def _fillEmpty(customerPath, rawRec):
     print("|-- Filling Missing Users...")
@@ -112,14 +114,14 @@ def _fillEmpty(customerPath, rawRec):
     missingCustomerDf["articleList"] = np.repeat([top12Item], missingCustomerDf.shape[0], axis=0).tolist()
     return missingCustomerDf
 
-def mapDataBack(customerDecoder, articleDecoder, customerPath, rawRec):
+def mapDataBack(customerDecoder, articleDecoder, customerPath, rec12Pd):
     print("|-- Start Mapping Index Back...")
     listDecoder = lambda x: list(itemgetter(*x)(articleDecoder)) 
-    rawRec["customer_id"] = rawRec["customer_id"].map(customerDecoder)
-    rawRec["articleList"] = rawRec["recList"].apply(listDecoder)
+    rec12Pd["customer_id"] = rec12Pd["customer_id"].map(customerDecoder)
+    rec12Pd["articleList"] = rec12Pd["recList"].apply(listDecoder)
     # print("!*********! RawRec Shape Before Fill: ", rawRec.shape[0])
-    recMissing = _fillEmpty(customerPath, rawRec)
-    recAll = pd.concat([rawRec[["customer_id", "articleList"]], 
+    recMissing = _fillEmpty(customerPath, rec12Pd)
+    recAll = pd.concat([rec12Pd[["customer_id", "articleList"]], 
                 recMissing[["customer_id", "articleList"]]])
     return recAll
 
@@ -130,7 +132,7 @@ def writeFormatted(df, fp, header):
 
 if __name__=="__main__":
     dataPath = "./co_filter"
-    rawDataPath = f"{dataPath}/transactions_train.csv"
+    rawDataPath = f"{dataPath}/transactions_selected.csv"
     customerPath = f"{dataPath}/customers.csv"
     recFinalPath = f"{dataPath}/recommend12.csv"
 
@@ -140,6 +142,7 @@ if __name__=="__main__":
     sparkDf = ss.createDataFrame(mappedDf)
     normedDf = normData(sparkDf)
     model = findBestModel(normedDf)
-    recommend = recommend(model)
-    finalRec = mapDataBack(customerDecoder, articleDecoder, customerPath, recommend)
+    rec12Pd = recommend(model)
+    finalRec = mapDataBack(customerDecoder, articleDecoder, customerPath, rec12Pd)
     writeFormatted(finalRec, recFinalPath, header=["customer_id", "prediction"])
+    print(f"|-- Recommendation Generated for {pd.read_csv(recFinalPath).shape[0]} Users!")
