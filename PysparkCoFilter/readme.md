@@ -2,9 +2,9 @@ To run this code, simply:
 1. Save `recommendation.py` to a project direcotry (`./`) 
 2. Create a foler in `./` called `co_filter` and `cd` into it
 3. download all three files to ./co_filter by copy and paste these three commands:
-  1. `$ gdown --fuzzy https://drive.google.com/file/d/1ibWX5ljvfVrs18LWS3O67aXxTdT_4r53/view?usp=sharing`
-  2. `$ gdown --fuzzy https://drive.google.com/file/d/1uiIg9fqSdrfJB-WuP7eQVyobc6Za21Vi/view?usp=sharing`
-  3. `$ gdown --fuzzy https://drive.google.com/file/d/1tPEqbaQZ29W8NlL2vFKTZB7G5dEpwr3p/view?usp=sharing`
+  1. `$ gdown --fuzzy https://drive.google.com/file/d/1huGN_CCrbLEaN0NZJz98rTiYRi0d_vrg/view?usp=sharing`
+  2. `$ gdown --fuzzy https://drive.google.com/file/d/1rmYH8JPehUcAcM4Y7Fwg6kiGr4QJc9oo/view?usp=sharing`
+  3. `$ gdown --fuzzy https://drive.google.com/file/d/1uu_h9Usoe8tamJk1c4M1qfx6R6pD2yES/view?usp=sharing`
 4. Now you should have a folder structure like this:
     ```bash
     ProjectRoot
