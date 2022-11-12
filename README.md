@@ -2,7 +2,7 @@
 
 ## Related Links 
 All Non-code and non-data link should be shared in here. (data and code share rule check below)
-1. [H&M Personalized Fashion Recommendations PPT](https://drive.google.com/drive/folders/19JlmjhmSUXnaKHoUbxHHvsdB-m_Qsjx1?usp=sharing)
+1. [H&M Personalized Fashion Recommendations PPT](https://docs.google.com/presentation/d/1gn0z0uwnthdbkendvLMMQGaOC0NKiUxt6X-7H-nL6cQ/edit?usp=sharing)
 2. [Master Data Folder](https://drive.google.com/drive/folders/184tVjsIO-GAjbkSakwDbEZ40M5mPpgu4?usp=sharing)
 
 ## Data Upload
